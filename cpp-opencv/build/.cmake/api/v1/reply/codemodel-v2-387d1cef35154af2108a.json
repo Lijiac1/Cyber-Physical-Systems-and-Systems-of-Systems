@@ -1,0 +1,69 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "template-opencv",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "generate_opendlv_standard_message_set_hpp::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-generate_opendlv_standard_message_set_hpp-Debug-61929e24c090bceb0019.json",
+					"name" : "generate_opendlv_standard_message_set_hpp",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "template-opencv::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-template-opencv-Debug-f8d4301bbb1ab6816015.json",
+					"name" : "template-opencv",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/li/桌面/dit638/2022-group-14/cpp-opencv/build",
+		"source" : "/home/li/桌面/dit638/2022-group-14/cpp-opencv"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 0
+	}
+}
