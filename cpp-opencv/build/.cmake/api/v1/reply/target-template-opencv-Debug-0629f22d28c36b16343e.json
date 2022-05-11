@@ -161,6 +161,11 @@
 				"role" : "libraries"
 			},
 			{
+				"backtrace" : 3,
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libopencv_photo.so.4.2.0",
+				"role" : "libraries"
+			},
+			{
 				"fragment" : "-pthread",
 				"role" : "libraries"
 			},

@@ -89,6 +89,7 @@ CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o: /usr/include/opencv4/o
 CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o: /usr/include/opencv4/opencv2/opencv.hpp
 CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o: /usr/include/opencv4/opencv2/opencv_modules.hpp
 CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o: /usr/include/opencv4/opencv2/photo.hpp
+CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o: /usr/include/opencv4/opencv2/photo/photo.hpp
 CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o: /usr/include/opencv4/opencv2/shape.hpp
 CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o: /usr/include/opencv4/opencv2/shape/emdL1.hpp
 CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o: /usr/include/opencv4/opencv2/shape/hist_cost.hpp

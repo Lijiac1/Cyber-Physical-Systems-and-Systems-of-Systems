@@ -11,6 +11,8 @@ cluon-complete.hpp
 /home/li/桌面/dit638/2022-group-14/cpp-opencv/src/cluon-complete.hpp
 opendlv-standard-message-set.hpp
 /home/li/桌面/dit638/2022-group-14/cpp-opencv/src/opendlv-standard-message-set.hpp
+opencv2/photo/photo.hpp
+-
 opencv2/highgui/highgui.hpp
 -
 opencv2/imgproc/imgproc.hpp
@@ -959,6 +961,10 @@ opencv2/core.hpp
 /usr/include/opencv4/opencv2/opencv2/core.hpp
 opencv2/imgproc.hpp
 /usr/include/opencv4/opencv2/opencv2/imgproc.hpp
+
+/usr/include/opencv4/opencv2/photo/photo.hpp
+opencv2/photo.hpp
+/usr/include/opencv4/opencv2/photo/opencv2/photo.hpp
 
 /usr/include/opencv4/opencv2/shape.hpp
 opencv2/shape/emdL1.hpp

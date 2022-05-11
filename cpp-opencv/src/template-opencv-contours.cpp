@@ -20,8 +20,7 @@
 // Include the OpenDLV Standard Message Set that contains messages that are usually exchanged for automotive or robotic applications 
 #include "opendlv-standard-message-set.hpp"
 
-// Include the GUI and image processing header files from OpenCV 4.2.0
-#include <opencv2/photo/photo.hpp>
+// Include the GUI and image processing header files from OpenCV
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/opencv.hpp>
@@ -29,7 +28,6 @@
 using namespace cv;
 using namespace std;
 void getContours(cv::Mat img);
-cv::Mat hsvFilter(cv::Mat img);
 
 
 int32_t main(int32_t argc, char **argv) {
@@ -143,7 +141,7 @@ int32_t main(int32_t argc, char **argv) {
                 fpsTick += ftick;
                 fpsGap += fgap;
                 composed += count;
-                // TODO: Do something with the frame.俄
+                // TODO: Do something with the frame.
                 // Example: Draw a red rectangle and display image.
                 cv::rectangle(img, cv::Point(50, 50), cv::Point(100, 100), cv::Scalar(0,0,255));
                 // add time to each fram
@@ -160,7 +158,7 @@ int32_t main(int32_t argc, char **argv) {
                 if (VERBOSE) {
                     getContours(imgCrop);
                     cv::imshow(sharedMemory->name().c_str(), img);
-                    //cv::imshow("imgCrop",hsvFilter(imgCrop));
+                    //cv::imshow("imgCrop",imgCrop);
                     
                     cv::waitKey(1);
                 }
@@ -173,97 +171,46 @@ int32_t main(int32_t argc, char **argv) {
 
 void getContours(cv::Mat img){
     // mat to generate the contours
-    cv::Mat imgGray, imgBlur, imgCanny, imgHSV, imgCopy;
+    cv::Mat imgGray, imgBlur, imgCanny, imgDil, imgCopy;
     //copy the img
-    //img.copyTo(imgCopy);
+    img.copyTo(imgCopy);
     // convert the img to Gray
-    //cv::cvtColor(img, imgGray, COLOR_BGR2GRAY);
+    cv::cvtColor(img, imgGray, COLOR_BGR2GRAY);
     // add blur for the converted img
-    //cv::GaussianBlur(imgGray, imgBlur, Size(3,3),3,0);
+    cv::GaussianBlur(imgGray, imgBlur, Size(3,3),3,0);
     // canny the img
-    //cv::Canny(imgBlur, imgCanny, 25, 75);
+    cv::Canny(imgBlur, imgCanny, 25, 75);
     // dilate the img
-    //cv::Mat kernel = cv::getStructuringElement(MORPH_RECT, Size(3,3));
-    //cv::dilate(imgCanny, imgDil, kernel);
-    imgHSV = hsvFilter(img);
+    cv::Mat kernel = cv::getStructuringElement(MORPH_RECT, Size(3,3));
+    cv::dilate(imgCanny, imgDil, kernel);
 
     // find out the contours that we need 
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
-    cv::findContours(imgHSV, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+    cv::findContours(imgDil, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
     //detect the polygon
     std::vector<std::vector<cv::Point>> conPloy(contours.size());
 
-    for (size_t i = 0; i < contours.size(); i++){
-
+    for (int i = 0; i < contours.size(); i++){
         
-        
+        int area = contourArea(contours[i]);
+        // sorting the contours
+        if(area < 800 && area > 10 ){
+            // detect the polygon
+            float peri = arcLength(contours[i], true);
+            cv::approxPolyDP(contours[i], conPloy[i], 0.02*peri, true);
+            // sorting the needded polygon
+            if(conPloy[i].size() <= 9){
+                cv::drawContours(imgCopy, conPloy, i, Scalar(255,0,0), 2);
 
-
-        
-        // int area = contourArea(contours[i]);
-        // // sorting the contours
-        // if(area < 800 && area > 10 ){
-        //     // detect the polygon
-        float peri = arcLength(contours[i], true);
-        cv::approxPolyDP(contours[i], conPloy[i], 0.09*peri, true);
-        //     // sorting the needded polygon
-        //     if(conPloy[i].size() <= 9){
-        // draw the assistant rectangle to help judge the cones
-        cv::Rect boundRect = cv::boundingRect(conPloy[i]);
-        //sorting the needed rectangle 
-        if(boundRect.area()>28){
-            cv::rectangle(img, boundRect.tl(), boundRect.br(), Scalar(255,0,0), 2, 8, 0);
-        }
-        
-        //cv::drawContours(imgCopy, conPloy, i, Scalar(255,0,0), 2);
-
-        //     }
+            }
             
-        // };
+        };
 
 
     }
 
-    cv::imshow("hsvimg",imgHSV);
-    cv::imshow("imgComposed",img);
+    cv::imshow("contours",imgDil);
+    cv::imshow("imgComposed",imgCopy);
 
 };
-
-cv::Mat hsvFilter(cv::Mat img){
-    // Scalar for yellow cones
-    // int HminY = 10, SminY = 45, VminY = 99;
-    // int HmaxY = 27, SmaxY = 255, VmaxY = 255;
-    // // Scallar for blue cones
-    // int HminB = 117, SminB = 84, VminB = 34;
-    // int HmaxB = 158, SmaxB = 178, VmaxB = 93;
-    // Scallar for both
-    int Hmin = 10, Smin = 93, Vmin = 39;
-    int Hmax = 137, Smax = 157, Vmax = 255;
-
-    cv::Mat imgHSV,outPut,tmp;//,yellowCones,blueCones
-    // use a rectangle to erasure the contours from car
-    //x 350 y 144
-    tmp = Mat::zeros(79,82,img.type());
-    cv::Rect roi_rect = cv::Rect(345,144,tmp.cols,tmp.rows);
-    tmp.copyTo(img(roi_rect));
-    //convert img to HSV image
-    cv::cvtColor(img, imgHSV, COLOR_BGR2HSV);
-    cv::inRange(imgHSV,cv::Scalar(Hmin,Smin,Vmin),cv::Scalar(Hmax,Smax,Vmax),outPut);
-    //cv::inRange(imgHSV,cv::Scalar(HminY,SminY,VminY),cv::Scalar(HmaxY,SmaxY,VmaxY),yellowCones);
-    //cv::inRange(yellowCones,cv::Scalar(HminB,SminB,VminB),cv::Scalar(HmaxB,SmaxB,VmaxB),blueCones);
-    //fuse two image
-    // cv::Point p(0,0);
-    // tmp = 255*cv::Mat::zeros(yellowCones.rows,yellowCones.cols,yellowCones.depth());
-    // cv::seamlessClone(yellowCones, blueCones, tmp, p, outPut, cv::MIXED_CLONE);
-
-    // add blur for the converted img
-    //cv::GaussianBlur(blueCones, outPut, cv::Size(3, 3), 0);
-    // dilate the img
-    //cv::dilate(outPut, outPut, 0);
-    // erode the img
-    //cv::erode(outPut, outPut, 0); 
-    return outPut;
-
-
-}

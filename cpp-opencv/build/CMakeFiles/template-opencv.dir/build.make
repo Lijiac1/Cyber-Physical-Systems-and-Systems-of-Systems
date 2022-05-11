@@ -81,6 +81,7 @@ template-opencv: CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o
 template-opencv: CMakeFiles/template-opencv.dir/build.make
 template-opencv: /usr/lib/x86_64-linux-gnu/librt.a
 template-opencv: /usr/lib/x86_64-linux-gnu/libopencv_highgui.so.4.2.0
+template-opencv: /usr/lib/x86_64-linux-gnu/libopencv_photo.so.4.2.0
 template-opencv: /usr/lib/x86_64-linux-gnu/libopencv_videoio.so.4.2.0
 template-opencv: /usr/lib/x86_64-linux-gnu/libopencv_imgcodecs.so.4.2.0
 template-opencv: /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.4.2.0

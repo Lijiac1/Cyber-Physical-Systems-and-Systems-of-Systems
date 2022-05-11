@@ -1155,7 +1155,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "[/usr][cfound components: core highgui imgproc ][v4.2.0()]"
+			"value" : "[/usr][cfound components: core highgui imgproc photo ][v4.2.0()]"
 		},
 		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_Threads",

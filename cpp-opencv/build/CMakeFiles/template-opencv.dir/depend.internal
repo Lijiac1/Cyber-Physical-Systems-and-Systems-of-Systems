@@ -90,6 +90,7 @@ CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o
  /usr/include/opencv4/opencv2/opencv.hpp
  /usr/include/opencv4/opencv2/opencv_modules.hpp
  /usr/include/opencv4/opencv2/photo.hpp
+ /usr/include/opencv4/opencv2/photo/photo.hpp
  /usr/include/opencv4/opencv2/shape.hpp
  /usr/include/opencv4/opencv2/shape/emdL1.hpp
  /usr/include/opencv4/opencv2/shape/hist_cost.hpp
