@@ -28,8 +28,18 @@
 
 using namespace cv;
 using namespace std;
-void getContours(cv::Mat img);
-cv::Mat hsvFilter(cv::Mat img);
+cv::Point car(321,420);
+std::vector<std::vector<cv::Point>> getContours(cv::Mat img, cv::Mat (*filter)(cv::Mat) );
+cv::Mat addContours(std::vector<std::vector<cv::Point>> contours, cv::Mat img, std::vector<cv::Point>* midPoint);
+cv::Mat YellowFilter(cv::Mat img);
+cv::Mat BlueFilter(cv::Mat img);
+bool compX(cv::Point a, cv::Point b);
+bool compY(cv::Point a, cv::Point b);
+void pointSort(std::vector<cv::Point>* midPoint);
+cv::Point getMidPoint(cv::Rect boundRect);
+void clockWise(std::vector<cv::Point> yelloWmidPoint);
+void steeringAngle(std::vector<cv::Point> blueMidPoint, std::vector<cv::Point> yellowMidPoint);
+
 
 
 int32_t main(int32_t argc, char **argv) {
@@ -71,7 +81,7 @@ int32_t main(int32_t argc, char **argv) {
                 // https://github.com/chrberger/libcluon/blob/master/libcluon/testsuites/TestEnvelopeConverter.cpp#L31-L40
                 std::lock_guard<std::mutex> lck(gsrMutex);
                 gsr = cluon::extractMessage<opendlv::proxy::GroundSteeringRequest>(std::move(env));
-                std::cout << "lambda: groundSteering = " << gsr.groundSteering() << std::endl;
+                //std::cout << "lambda: groundSteering = " << gsr.groundSteering() << std::endl;
             };
 
             od4.dataTrigger(opendlv::proxy::GroundSteeringRequest::ID(), onGroundSteeringRequest);
@@ -153,12 +163,22 @@ int32_t main(int32_t argc, char **argv) {
                 // If you want to access the latest received ground steering, don't forget to lock the mutex:
                 {
                     std::lock_guard<std::mutex> lck(gsrMutex);
-                    std::cout << "main: groundSteering = " << gsr.groundSteering() << std::endl;
+                    //std::cout << "main: groundSteering = " << gsr.groundSteering() << std::endl;
                 }
 
                 // Display image on your screen.
                 if (VERBOSE) {
-                    getContours(imgCrop);
+                    std::vector<cv::Point> blueMidPoint;
+                    std::vector<cv::Point> yellowMidPoint;
+                    std::vector<std::vector<cv::Point>> blueContours = getContours(imgCrop,BlueFilter);
+                    std::vector<std::vector<cv::Point>> yellowContours = getContours(imgCrop,YellowFilter);
+                    cv::Mat firstStageImage = addContours(blueContours,imgCrop,&blueMidPoint);
+                    cv::Mat finalImage = addContours(yellowContours,firstStageImage,&yellowMidPoint);
+                    pointSort(&blueMidPoint);
+                    pointSort(&yellowMidPoint);
+                    //clockWise(yellowMidPoint);
+                    steeringAngle(blueMidPoint,yellowMidPoint);
+                    cv::imshow("final",finalImage);
                     cv::imshow(sharedMemory->name().c_str(), img);
                     //cv::imshow("imgCrop",hsvFilter(imgCrop));
                     
@@ -171,7 +191,8 @@ int32_t main(int32_t argc, char **argv) {
     return retCode;
 }
 
-void getContours(cv::Mat img){
+//get the contours basd on the HSV filter and return a vector contains the contours 
+std::vector<std::vector<cv::Point>> getContours(cv::Mat img, cv::Mat (*filter)(cv::Mat) ){
     // mat to generate the contours
     cv::Mat imgGray, imgBlur, imgCanny, imgHSV, imgCopy;
     //copy the img
@@ -185,22 +206,27 @@ void getContours(cv::Mat img){
     // dilate the img
     //cv::Mat kernel = cv::getStructuringElement(MORPH_RECT, Size(3,3));
     //cv::dilate(imgCanny, imgDil, kernel);
-    imgHSV = hsvFilter(img);
+    imgHSV = filter(img);
 
     // find out the contours that we need 
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
     cv::findContours(imgHSV, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+    //display the img after hsv filter
+    cv::imshow("hsv",imgHSV);
+
+    return contours;
+    
+
+};
+
+//add contours to image
+cv::Mat addContours(std::vector<std::vector<cv::Point>> contours, cv::Mat img, std::vector<cv::Point>* midPoint){
+
     //detect the polygon
     std::vector<std::vector<cv::Point>> conPloy(contours.size());
-
     for (size_t i = 0; i < contours.size(); i++){
 
-        
-        
-
-
-        
         // int area = contourArea(contours[i]);
         // // sorting the contours
         // if(area < 800 && area > 10 ){
@@ -212,7 +238,8 @@ void getContours(cv::Mat img){
         // draw the assistant rectangle to help judge the cones
         cv::Rect boundRect = cv::boundingRect(conPloy[i]);
         //sorting the needed rectangle 
-        if(boundRect.area()>28){
+        if(boundRect.area()>30){
+            midPoint->push_back(getMidPoint(boundRect));
             cv::rectangle(img, boundRect.tl(), boundRect.br(), Scalar(255,0,0), 2, 8, 0);
         }
         
@@ -221,25 +248,104 @@ void getContours(cv::Mat img){
         //     }
             
         // };
+    }
+    return img;
+}
+
+//get the mid point from the detected rectangles
+cv::Point getMidPoint(cv::Rect boundRect){
+    int x = (boundRect.br().x+boundRect.tl().x)/2;
+    int y = (boundRect.tl().y+boundRect.br().y)/2;
+    cv::Point p(x,y);
+    return p;
+}
 
 
+//define the sort rules
+bool compX(cv::Point a, cv::Point b){
+    return a.x > b.x;
+}
+
+//define the sort rules
+bool compY(cv::Point a, cv::Point b){
+    return a.y > b.y;
+}
+
+//sort the point according to the value of the x
+void pointSort(std::vector<cv::Point>* midPoint){
+    if(!(midPoint->empty())){
+        std::sort(midPoint->begin(), midPoint->end(), compX);
     }
 
-    cv::imshow("hsvimg",imgHSV);
-    cv::imshow("imgComposed",img);
+}
 
-};
+//judge if it is clockwise
+void clockWise(std::vector<cv::Point> yelloWmidPoint){
+    if(!(yelloWmidPoint.empty())){
+        //calculate the k of the line(based on the yellow cones)
+        float k;
+        float y = (yelloWmidPoint.front().y)-(yelloWmidPoint.back().y);
+        float x = (yelloWmidPoint.front().x)-(yelloWmidPoint.back().x);
+        if(y&&x){
 
-cv::Mat hsvFilter(cv::Mat img){
+            k = y/x;
+            //cout << k << endl;
+            
+        }
+        
+        //when clockWise the liene of the yellow cones is negative
+        
+    }
+}
+
+void steeringAngle(std::vector<cv::Point> blueMidPoint, std::vector<cv::Point> yellowMidPoint){
+    std::vector<cv::Point> blueMidPointCopy(blueMidPoint);
+    std::vector<cv::Point> yellowMidPointCopy(yellowMidPoint);
+    if(!(blueMidPointCopy.empty())){
+        std::sort(blueMidPointCopy.begin(),blueMidPointCopy.end(),compY);
+    }
+
+    if(!(yellowMidPointCopy.empty())){
+       std::sort(yellowMidPointCopy.begin(),yellowMidPointCopy.end(),compY); 
+    }
+    
+    //if only yellow cones exists
+    if(blueMidPoint.empty()&&(!yellowMidPoint.empty())){
+        // if the yellow cones stand on the right of the car 
+        if(yellowMidPointCopy.front().x > car.x){
+            cout << "turn left" << endl;
+        }
+        // if the yellow cones stand on the left of the car 
+        else if(yellowMidPointCopy.front().x < car.x){
+            cout << "turn right" << endl;
+        }
+
+    }
+    //if only blue cones exists
+    else if((!blueMidPoint.empty())&&yellowMidPoint.empty()){
+        //if the blue cones stand on the right of the car 
+        if(blueMidPointCopy.front().x > car.x){
+            cout << "turn left" << endl;
+        }
+        // if the blue cones stand on the left of the car 
+        else if(blueMidPointCopy.front().x < car.x){
+            cout << "turn right" << endl;
+        }
+    }
+
+}
+
+// filter for the yellow cones
+cv::Mat YellowFilter(cv::Mat img){
     // Scalar for yellow cones
-    // int HminY = 10, SminY = 45, VminY = 99;
-    // int HmaxY = 27, SmaxY = 255, VmaxY = 255;
+     int HminY = 10, SminY = 45, VminY = 99;
+     int HmaxY = 27, SmaxY = 255, VmaxY = 255;
     // // Scallar for blue cones
     // int HminB = 117, SminB = 84, VminB = 34;
     // int HmaxB = 158, SmaxB = 178, VmaxB = 93;
     // Scallar for both
-    int Hmin = 10, Smin = 93, Vmin = 39;
-    int Hmax = 137, Smax = 157, Vmax = 255;
+    //int Hmin = 10, Smin = 93, Vmin = 39;
+    //int Hmax = 137, Smax = 157, Vmax = 255;
 
     cv::Mat imgHSV,outPut,tmp;//,yellowCones,blueCones
     // use a rectangle to erasure the contours from car
@@ -249,7 +355,46 @@ cv::Mat hsvFilter(cv::Mat img){
     tmp.copyTo(img(roi_rect));
     //convert img to HSV image
     cv::cvtColor(img, imgHSV, COLOR_BGR2HSV);
-    cv::inRange(imgHSV,cv::Scalar(Hmin,Smin,Vmin),cv::Scalar(Hmax,Smax,Vmax),outPut);
+    cv::inRange(imgHSV,cv::Scalar(HminY,SminY,VminY),cv::Scalar(HmaxY,SmaxY,VmaxY),outPut);
+    //cv::inRange(imgHSV,cv::Scalar(HminY,SminY,VminY),cv::Scalar(HmaxY,SmaxY,VmaxY),yellowCones);
+    //cv::inRange(yellowCones,cv::Scalar(HminB,SminB,VminB),cv::Scalar(HmaxB,SmaxB,VmaxB),blueCones);
+    //fuse two image
+    // cv::Point p(0,0);
+    // tmp = 255*cv::Mat::zeros(yellowCones.rows,yellowCones.cols,yellowCones.depth());
+    // cv::seamlessClone(yellowCones, blueCones, tmp, p, outPut, cv::MIXED_CLONE);
+
+    // add blur for the converted img
+    //cv::GaussianBlur(blueCones, outPut, cv::Size(3, 3), 0);
+    // dilate the img
+    //cv::dilate(outPut, outPut, 0);
+    // erode the img
+    //cv::erode(outPut, outPut, 0); 
+    return outPut;
+
+
+}
+
+// filter for the blue cones
+cv::Mat BlueFilter(cv::Mat img){
+    // Scalar for yellow cones
+    // int HminY = 10, SminY = 45, VminY = 99;
+    // int HmaxY = 27, SmaxY = 255, VmaxY = 255;
+    // // Scallar for blue cones
+     int HminB = 117, SminB = 84, VminB = 34;
+     int HmaxB = 158, SmaxB = 178, VmaxB = 93;
+    // Scallar for both
+    //int Hmin = 10, Smin = 93, Vmin = 39;
+    //int Hmax = 137, Smax = 157, Vmax = 255;
+
+    cv::Mat imgHSV,outPut,tmp;//,yellowCones,blueCones
+    // use a rectangle to erasure the contours from car
+    //x 350 y 144
+    tmp = Mat::zeros(79,82,img.type());
+    cv::Rect roi_rect = cv::Rect(345,144,tmp.cols,tmp.rows);
+    tmp.copyTo(img(roi_rect));
+    //convert img to HSV image
+    cv::cvtColor(img, imgHSV, COLOR_BGR2HSV);
+    cv::inRange(imgHSV,cv::Scalar(HminB,SminB,VminB),cv::Scalar(HmaxB,SmaxB,VmaxB),outPut);
     //cv::inRange(imgHSV,cv::Scalar(HminY,SminY,VminY),cv::Scalar(HmaxY,SmaxY,VmaxY),yellowCones);
     //cv::inRange(yellowCones,cv::Scalar(HminB,SminB,VminB),cv::Scalar(HmaxB,SmaxB,VmaxB),blueCones);
     //fuse two image
