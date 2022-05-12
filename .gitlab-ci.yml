@@ -72,6 +72,8 @@ release:
   tags:
     - docker-build
   stage: deploy
+  before_script:
+    - cd helloworld
   script:
     #- docker build -f Dockerfile -t "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG" .
     #- docker push "$CI_REGISTRY_IMAGE":"$CI_COMMIT_TAG"
