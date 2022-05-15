@@ -45,6 +45,7 @@ float steeringAngle(std::vector<cv::Point> blueMidPoint, std::vector<cv::Point> 
 int32_t main(int32_t argc, char **argv) {
     std::ofstream p;
     p.open("outPut.csv",std::ios::out|std::ios::trunc);
+    p <<"goundSteering, group_14"<< std::endl; 
     int32_t retCode{1};
     // Parse the command line parameters as we require the user to specify some mandatory information on startup.
     auto commandlineArguments = cluon::getCommandlineArguments(argc, argv);
@@ -183,12 +184,16 @@ int32_t main(int32_t argc, char **argv) {
                     cv::Mat finalImage = addContours(yellowContours,firstStageImage,&yellowMidPoint);
                     pointSort(&blueMidPoint);
                     pointSort(&yellowMidPoint);
-                    //steeringAngle(blueMidPoint,yellowMidPoint);
+                    float slope = 0.0;
+                    slope = steeringAngle(blueMidPoint,yellowMidPoint);
+                    if( slope > 1.5 || slope < -1.5 ){
+                        slope = 0.0;
+                    }
                     
                     {
                     std::lock_guard<std::mutex> lck(gsrMutex);
-                    std::cout << "main: groundSteering = " << gsr.groundSteering()<< " slope: "<< steeringAngle(blueMidPoint,yellowMidPoint) <<std::endl;
-                    p << gsr.groundSteering() <<","<< steeringAngle(blueMidPoint,yellowMidPoint) << std::endl;
+                    std::cout << "main: groundSteering = " << gsr.groundSteering()<< " slope: "<< slope <<std::endl;
+                    p << gsr.groundSteering() <<","<< slope << std::endl;
                     }
                     cv::imshow("final",finalImage);
                     cv::imshow(sharedMemory->name().c_str(), img);
