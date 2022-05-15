@@ -37,7 +37,7 @@ bool compX(cv::Point a, cv::Point b);
 bool compY(cv::Point a, cv::Point b);
 void pointSort(std::vector<cv::Point>* midPoint);
 cv::Point getMidPoint(cv::Rect boundRect);
-void clockWise(std::vector<cv::Point> yelloWmidPoint);
+int PointToLine(std::vector<cv::Point> midPoint, cv::Point point);
 void steeringAngle(std::vector<cv::Point> blueMidPoint, std::vector<cv::Point> yellowMidPoint);
 
 
@@ -75,7 +75,9 @@ int32_t main(int32_t argc, char **argv) {
             cluon::OD4Session od4{static_cast<uint16_t>(std::stoi(commandlineArguments["cid"]))};
 
             opendlv::proxy::GroundSteeringRequest gsr;
+            opendlv::proxy::DistanceReading dis;
             std::mutex gsrMutex;
+            std::mutex disMutex;
             auto onGroundSteeringRequest = [&gsr, &gsrMutex](cluon::data::Envelope &&env){
                 // The envelope data structure provide further details, such as sampleTimePoint as shown in this test case:
                 // https://github.com/chrberger/libcluon/blob/master/libcluon/testsuites/TestEnvelopeConverter.cpp#L31-L40
@@ -83,8 +85,14 @@ int32_t main(int32_t argc, char **argv) {
                 gsr = cluon::extractMessage<opendlv::proxy::GroundSteeringRequest>(std::move(env));
                 //std::cout << "lambda: groundSteering = " << gsr.groundSteering() << std::endl;
             };
+            auto onDistanceReading = [&dis, &disMutex](cluon::data::Envelope &&env){
+                std::lock_guard<std::mutex> lck(disMutex);
+                dis = cluon::extractMessage<opendlv::proxy::DistanceReading>(std::move(env));
+            };
+            
 
             od4.dataTrigger(opendlv::proxy::GroundSteeringRequest::ID(), onGroundSteeringRequest);
+            od4.dataTrigger(opendlv::proxy::DistanceReading::ID(), onDistanceReading);
 
             // Endless loop; end the program by pressing Ctrl-C.
             // counter for frame
@@ -161,10 +169,7 @@ int32_t main(int32_t argc, char **argv) {
                 cv::putText(img,fpsGap, cv::Point(22,33), cv::FONT_HERSHEY_PLAIN ,1, cv::Scalar(255,255,255));
                 cv::putText(img,fpsTick, cv::Point(22,44), cv::FONT_HERSHEY_PLAIN ,1, cv::Scalar(255,255,255));
                 // If you want to access the latest received ground steering, don't forget to lock the mutex:
-                {
-                    std::lock_guard<std::mutex> lck(gsrMutex);
-                    //std::cout << "main: groundSteering = " << gsr.groundSteering() << std::endl;
-                }
+                
 
                 // Display image on your screen.
                 if (VERBOSE) {
@@ -176,8 +181,12 @@ int32_t main(int32_t argc, char **argv) {
                     cv::Mat finalImage = addContours(yellowContours,firstStageImage,&yellowMidPoint);
                     pointSort(&blueMidPoint);
                     pointSort(&yellowMidPoint);
-                    //clockWise(yellowMidPoint);
-                    steeringAngle(blueMidPoint,yellowMidPoint);
+                    //steeringAngle(blueMidPoint,yellowMidPoint);
+                    
+                    {
+                    std::lock_guard<std::mutex> lck(gsrMutex);
+                    std::cout << "main: groundSteering = " << gsr.groundSteering()<<" "<< PointToLine(yellowMidPoint,car) << std::endl;
+                    }
                     cv::imshow("final",finalImage);
                     cv::imshow(sharedMemory->name().c_str(), img);
                     //cv::imshow("imgCrop",hsvFilter(imgCrop));
@@ -279,23 +288,40 @@ void pointSort(std::vector<cv::Point>* midPoint){
 
 }
 
-//judge if it is clockwise
-void clockWise(std::vector<cv::Point> yelloWmidPoint){
-    if(!(yelloWmidPoint.empty())){
-        //calculate the k of the line(based on the yellow cones)
-        float k;
-        float y = (yelloWmidPoint.front().y)-(yelloWmidPoint.back().y);
-        float x = (yelloWmidPoint.front().x)-(yelloWmidPoint.back().x);
-        if(y&&x){
+//get the distance between line and point
+int PointToLine(std::vector<cv::Point> midPoint, cv::Point point){
+    int mean = 0;
+    int sum = 0;
+    int distance = 0;
+    if(!(midPoint.empty())){
+        // //calculate the k of the line
+        // float k;
+        // float up;
+        // float down;
+        // float distance;
+        // float y = (midPoint.front().y)-(midPoint.back().y);
+        // float x = (midPoint.front().x)-(midPoint.back().x);
+        // // use the distance calculate formula
+        // if(y&&x){
 
-            k = y/x;
-            //cout << k << endl;
+        //     k = y/x;
+        //     up = std::fabs(k*(point.x-midPoint.front().x)+(midPoint.front().y-point.y));
+        //     down = std::sqrt(1+k*k);
+        //     distance = up/down;
+        //     cout << distance << endl;
             
-        }
+        // }
         
-        //when clockWise the liene of the yellow cones is negative
+
+        for(size_t i = 0; i < midPoint.size(); i++){
+            sum = sum + midPoint[i].x;
+        }
+        mean = sum/midPoint.size();
+        distance = mean-point.x;
         
     }
+    return distance;
+    
 }
 
 void steeringAngle(std::vector<cv::Point> blueMidPoint, std::vector<cv::Point> yellowMidPoint){
