@@ -28,7 +28,9 @@
 
 using namespace cv;
 using namespace std;
+//fix the car posision on the image
 cv::Point car(321,420);
+
 std::vector<std::vector<cv::Point>> getContours(cv::Mat img, cv::Mat (*filter)(cv::Mat) );
 cv::Mat addContours(std::vector<std::vector<cv::Point>> contours, cv::Mat img, std::vector<cv::Point>* midPoint);
 cv::Mat YellowFilter(cv::Mat img);
@@ -184,6 +186,7 @@ int32_t main(int32_t argc, char **argv) {
                     pointSort(&yellowMidPoint);
                     float slope = 0.0;
                     slope = steeringAngle(blueMidPoint,yellowMidPoint);
+                    //sort the data witn the range.
                     if( slope > 1.5 || slope < -1.5 ){
                         slope = 0.0;
                     }
@@ -228,8 +231,6 @@ std::vector<std::vector<cv::Point>> getContours(cv::Mat img, cv::Mat (*filter)(c
     std::vector<std::vector<cv::Point>> contours;
     std::vector<cv::Vec4i> hierarchy;
     cv::findContours(imgHSV, contours, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-    //display the img after hsv filter
-    cv::imshow("hsv",imgHSV);
 
     return contours;
     
@@ -242,15 +243,9 @@ cv::Mat addContours(std::vector<std::vector<cv::Point>> contours, cv::Mat img, s
     //detect the polygon
     std::vector<std::vector<cv::Point>> conPloy(contours.size());
     for (size_t i = 0; i < contours.size(); i++){
-
-        // int area = contourArea(contours[i]);
-        // // sorting the contours
-        // if(area < 800 && area > 10 ){
         //     // detect the polygon
         float peri = arcLength(contours[i], true);
         cv::approxPolyDP(contours[i], conPloy[i], 0.09*peri, true);
-        //     // sorting the needded polygon
-        //     if(conPloy[i].size() <= 9){
         // draw the assistant rectangle to help judge the cones
         cv::Rect boundRect = cv::boundingRect(conPloy[i]);
         //sorting the needed rectangle 
@@ -260,10 +255,6 @@ cv::Mat addContours(std::vector<std::vector<cv::Point>> contours, cv::Mat img, s
         }
         
         //cv::drawContours(imgCopy, conPloy, i, Scalar(255,0,0), 2);
-
-        //     }
-            
-        // };
     }
     return img;
 }
@@ -305,18 +296,9 @@ float slope(std::vector<cv::Point> midPoint){
         float x = (midPoint.front().x)-(midPoint.back().x);
         // use the distance calculate formula
         if(y && x){
-
+            // calculate the slope
             k = y/x;
-            
-            
         }
-        
-
-        // for(size_t i = 0; i < midPoint.size(); i++){
-        //     sum = sum + midPoint[i].x;
-        // }
-        // mean = sum/midPoint.size();
-        // distance = mean-point.x;
         
     }
     return k;
@@ -324,8 +306,10 @@ float slope(std::vector<cv::Point> midPoint){
 }
 
 float steeringAngle(std::vector<cv::Point> blueMidPoint, std::vector<cv::Point> yellowMidPoint){
+    // make a copy of the vector
     std::vector<cv::Point> blueMidPointCopy(blueMidPoint);
     std::vector<cv::Point> yellowMidPointCopy(yellowMidPoint);
+    // sort the point base on the value of the 
     if(!(blueMidPointCopy.empty())){
         std::sort(blueMidPointCopy.begin(),blueMidPointCopy.end(),compY);
     }
