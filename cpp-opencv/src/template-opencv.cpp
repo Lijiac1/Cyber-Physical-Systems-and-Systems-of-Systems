@@ -164,9 +164,7 @@ int32_t main(int32_t argc, char **argv) {
                 fpsTick += ftick;
                 fpsGap += fgap;
                 composed += count;
-                // TODO: Do something with the frame.俄
-                // Example: Draw a red rectangle and display image.
-                cv::rectangle(img, cv::Point(50, 50), cv::Point(100, 100), cv::Scalar(0,0,255));
+                // TODO: Do something with the frame
                 // add time to each fram
                 cv::putText(img,composed, cv::Point(22,22), cv::FONT_HERSHEY_PLAIN ,1, cv::Scalar(255,255,255));
                 cv::putText(img,fpsGap, cv::Point(22,33), cv::FONT_HERSHEY_PLAIN ,1, cv::Scalar(255,255,255));
