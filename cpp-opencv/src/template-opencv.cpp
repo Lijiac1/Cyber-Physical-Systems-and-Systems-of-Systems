@@ -186,16 +186,21 @@ int32_t main(int32_t argc, char **argv) {
                     pointSort(&yellowMidPoint);
                     float slope = 0.0;
                     slope = steeringAngle(blueMidPoint,yellowMidPoint);
+                    float angle = std::atan(slope);
                     //sort the data witn the range.
-                    if( slope > 1.5 || slope < -1.5 ){
-                        slope = 0.0;
+                    if( angle > 0.2 ){
+                        float tmp = angle - float(0.2);
+                        angle = 0.2 + tmp/10;
+                    }else if(angle < -0.2){
+                        float tmp = angle + float(0.2);
+                        angle = -0.2 + tmp/10;
                     }
                     
                     {
                     std::lock_guard<std::mutex> lck(gsrMutex);
                     //std::cout << "main: groundSteering = " << gsr.groundSteering()<< " slope: "<< slope <<std::endl;
-                    std::cout << "group_14;" << utcTime_M << ";" << std::atan(slope) << std::endl;
-                    p << utcTime_M <<","<< gsr.groundSteering() <<","<< std::atan(slope) << std::endl;
+                    std::cout << "group_14;" << utcTime_M << ";" << angle << std::endl;
+                    p << utcTime_M <<","<< gsr.groundSteering() <<","<< angle << std::endl;
                     }
                     cv::imshow("final",finalImage);
                     cv::imshow(sharedMemory->name().c_str(), img);
