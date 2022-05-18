@@ -47,7 +47,7 @@ float steeringAngle(std::vector<cv::Point> blueMidPoint, std::vector<cv::Point> 
 int32_t main(int32_t argc, char **argv) {
     std::ofstream p;
     p.open("outPut.csv",std::ios::out|std::ios::trunc);
-    p <<"timeStamp,goundSteering, group_14"<< std::endl; 
+    p <<"timeStamp,goundSteering, group_14, time"<< std::endl; 
     int32_t retCode{1};
     // Parse the command line parameters as we require the user to specify some mandatory information on startup.
     auto commandlineArguments = cluon::getCommandlineArguments(argc, argv);
@@ -172,36 +172,40 @@ int32_t main(int32_t argc, char **argv) {
                 cv::putText(img,fpsGap, cv::Point(22,33), cv::FONT_HERSHEY_PLAIN ,1, cv::Scalar(255,255,255));
                 cv::putText(img,fpsTick, cv::Point(22,44), cv::FONT_HERSHEY_PLAIN ,1, cv::Scalar(255,255,255));
                 // If you want to access the latest received ground steering, don't forget to lock the mutex:
+                int64_t start = cluon::time::toMicroseconds(cluon::time::now());
+                std::vector<cv::Point> blueMidPoint;
+                std::vector<cv::Point> yellowMidPoint;
+                std::vector<std::vector<cv::Point>> blueContours = getContours(imgCrop,BlueFilter);
+                std::vector<std::vector<cv::Point>> yellowContours = getContours(imgCrop,YellowFilter);
+                cv::Mat firstStageImage = addContours(blueContours,imgCrop,&blueMidPoint);
+                cv::Mat finalImage = addContours(yellowContours,firstStageImage,&yellowMidPoint);
+                pointSort(&blueMidPoint);
+                pointSort(&yellowMidPoint);
+                float slope = 0.0;
+                slope = steeringAngle(blueMidPoint,yellowMidPoint);
+                float angle = std::atan(slope);
+                //sort the data witn the range.
+                if( angle > 0.2 ){
+                    float tmp = angle - float(0.2);
+                    angle = 0.2 + tmp/10;
+                }else if(angle < -0.2){
+                    float tmp = angle + float(0.2);
+                    angle = -0.2 + tmp/10;
+                }
+                int64_t stop = cluon::time::toMicroseconds(cluon::time::now());
+                int64_t complex = stop - start;
+                
+
+                {
+                std::lock_guard<std::mutex> lck(gsrMutex);
+                //std::cout << "main: groundSteering = " << gsr.groundSteering()<< " slope: "<< slope <<std::endl;
+                std::cout << "group_14;" << utcTime_M << ";" << angle << std::endl;
+                p << utcTime_M <<","<< gsr.groundSteering() <<","<< angle<< ","<< complex << std::endl;
+                }
                 
 
                 // Display image on your screen.
                 if (VERBOSE) {
-                    std::vector<cv::Point> blueMidPoint;
-                    std::vector<cv::Point> yellowMidPoint;
-                    std::vector<std::vector<cv::Point>> blueContours = getContours(imgCrop,BlueFilter);
-                    std::vector<std::vector<cv::Point>> yellowContours = getContours(imgCrop,YellowFilter);
-                    cv::Mat firstStageImage = addContours(blueContours,imgCrop,&blueMidPoint);
-                    cv::Mat finalImage = addContours(yellowContours,firstStageImage,&yellowMidPoint);
-                    pointSort(&blueMidPoint);
-                    pointSort(&yellowMidPoint);
-                    float slope = 0.0;
-                    slope = steeringAngle(blueMidPoint,yellowMidPoint);
-                    float angle = std::atan(slope);
-                    //sort the data witn the range.
-                    if( angle > 0.2 ){
-                        float tmp = angle - float(0.2);
-                        angle = 0.2 + tmp/10;
-                    }else if(angle < -0.2){
-                        float tmp = angle + float(0.2);
-                        angle = -0.2 + tmp/10;
-                    }
-                    
-                    {
-                    std::lock_guard<std::mutex> lck(gsrMutex);
-                    //std::cout << "main: groundSteering = " << gsr.groundSteering()<< " slope: "<< slope <<std::endl;
-                    std::cout << "group_14;" << utcTime_M << ";" << angle << std::endl;
-                    p << utcTime_M <<","<< gsr.groundSteering() <<","<< angle << std::endl;
-                    }
                     cv::imshow("final",finalImage);
                     cv::imshow(sharedMemory->name().c_str(), img);
                     //cv::imshow("imgCrop",hsvFilter(imgCrop));
