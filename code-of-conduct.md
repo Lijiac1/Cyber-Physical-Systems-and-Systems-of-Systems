@@ -9,7 +9,7 @@
     We will divide the project into sprints and follow a Kanban board to track progress increasing tracability. Kanban Board will contain task cards where team members will be assigned to tasks this would allow team members to check and visualise an ovierview of the prject. For every sprint, Sprint planning and sprint retrosepectives will be held to reflect and plan for current and future sprints.
     
 
-4. What is our usual communication plan?
+4. What is our primarly communication plan?
     We will using the discord as our main communication tool
     besides that Zoom meetings is the mainly meeting and discuss tool
     and if necessary we will have campus meeting
