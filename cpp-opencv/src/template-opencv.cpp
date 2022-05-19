@@ -116,7 +116,7 @@ int32_t main(int32_t argc, char **argv) {
                 counter++;
                 // Wait for a notification of a new frame.
                 sharedMemory->wait();
-
+                cluon::data::TimeStamp tsFromVideo;
                 // Lock the shared memory.
                 sharedMemory->lock();
                 {
@@ -124,6 +124,7 @@ int32_t main(int32_t argc, char **argv) {
                     cv::Mat wrapped(HEIGHT, WIDTH, CV_8UC4, sharedMemory->data());
                     img = wrapped.clone();
                     imgCrop = img(roi);
+                    tsFromVideo = sharedMemory->getTimeStamp().second;
                     
                 }
                 // TODO: Here, you can add some code to check the sampleTimePoint when the current frame was captured.
@@ -132,7 +133,7 @@ int32_t main(int32_t argc, char **argv) {
                 //get the time in micro seconds from cluon lib
                 
                 //convert it to string
-                std::string utcTime_M = std::to_string(mSeconds-7200000000);
+                std::string utcTime_M = std::to_string(cluon::time::toMicroseconds(tsFromVideo));
                 //get time from 
                 std::time_t seconds = std::time(nullptr);
                 //get time in seconds
