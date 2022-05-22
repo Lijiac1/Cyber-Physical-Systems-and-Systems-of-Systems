@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/home/li/桌面/dit638/2022-group-14/cpp-opencv/build",
-  "command": "/usr/bin/g++   -I/home/li/桌面/dit638/2022-group-14/cpp-opencv/src -isystem /home/li/桌面/dit638/2022-group-14/cpp-opencv/build -isystem /usr/include/opencv4       -D_XOPEN_SOURCE=700     -D_FORTIFY_SOURCE=2     -O2     -fstack-protector     -fomit-frame-pointer     -pipe     -Weffc++     -Wall -Wextra -Wshadow -Wdeprecated     -Wdiv-by-zero -Wfloat-equal -Wfloat-conversion -Wsign-compare -Wpointer-arith     -Wuninitialized -Wunreachable-code     -Wunused -Wunused-function -Wunused-label -Wunused-parameter -Wunused-but-set-parameter -Wunused-but-set-variable     -Wunused-value -Wunused-variable -Wunused-result     -Wmissing-field-initializers -Wmissing-format-attribute -Wmissing-include-dirs -Wmissing-noreturn -g   -pthread -std=c++14 -o CMakeFiles/template-opencv.dir/src/template-opencv.cpp.o -c /home/li/桌面/dit638/2022-group-14/cpp-opencv/src/template-opencv.cpp",
-  "file": "/home/li/桌面/dit638/2022-group-14/cpp-opencv/src/template-opencv.cpp"
-}
-]
