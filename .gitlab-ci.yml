@@ -46,6 +46,7 @@ build-and-test:
   stage: build
   script:
     - docker build -t group-14:latest -f Dockerfile .
+    - cd ..
     - cd video-replay
     - docker build -t video-replay:latest -f Dockerfile .
     - docker run --rm -ti --net=host --ipc=host -v /tmp:/tmp video-replay:latest --cid=253 --name=img 
