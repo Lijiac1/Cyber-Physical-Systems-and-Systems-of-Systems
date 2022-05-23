@@ -46,6 +46,10 @@ build-and-test:
   stage: build
   script:
     - docker build -t group-14:latest -f Dockerfile .
+    - cd rec_file
+    - docker-compose up -d
+    - docker run --rm -ti --net=host --ipc=host -v /tmp:/tmp h264decoder:v0.0.4 --cid=253 --name=img
+    - docker run --rm -ti --net=host --ipc=host -v /tmp:/tmp my-opencv-example:latest --cid=253 --name=img --width=640 --height=480 
     #- mkdir cid
     #- docker create --cidfile "cid/container_id.cid" name:latest
     #- docker cp `cat cid/container_id.cid`:usr/bin/code_coverage.pdf .
