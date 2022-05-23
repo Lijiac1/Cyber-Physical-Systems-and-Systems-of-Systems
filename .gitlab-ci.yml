@@ -49,7 +49,10 @@ build-and-test:
     - cd ..
     - cd video-replay
     - docker build -t video-replay:latest -f Dockerfile .
-    - docker run --rm -ti --net=host --ipc=host -v /tmp:/tmp video-replay:latest --cid=253 --name=img 
+    - cd ..
+    - cd cpp-opencv
+    - cd rec_file
+    - docker run --rm -ti --net=host --ipc=host -v /tmp:/tmp video-replay:latest --cid=253 --name=img CID-140-recording-2020-03-18_145043-selection.rec
     - docker run --rm -ti --net=host --ipc=host -v /tmp:/tmp h264decoder:v0.0.4 --cid=253 --name=img
     - docker run --rm -ti --net=host --ipc=host -v /tmp:/tmp my-opencv-example:latest --cid=253 --name=img --width=640 --height=480 
     #- mkdir cid
