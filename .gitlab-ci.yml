@@ -46,8 +46,9 @@ build-and-test:
   stage: build
   script:
     - docker build -t group-14:latest -f Dockerfile .
-    - cd rec_file
-    - docker-compose up -d
+    - cd video-replay
+    - docker build -t video-replay:latest -f Dockerfile .
+    - docker run --rm -ti --net=host --ipc=host -v /tmp:/tmp video-replay:latest --cid=253 --name=img 
     - docker run --rm -ti --net=host --ipc=host -v /tmp:/tmp h264decoder:v0.0.4 --cid=253 --name=img
     - docker run --rm -ti --net=host --ipc=host -v /tmp:/tmp my-opencv-example:latest --cid=253 --name=img --width=640 --height=480 
     #- mkdir cid
