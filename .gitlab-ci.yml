@@ -53,7 +53,7 @@ build-and-test:
     - cd cpp-opencv
     - cd rec_file
     - docker run --rm -i --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=img 144821.rec
-    - docker run --rm -i --net=host --ipc=host -v /tmp:/tmp my-opencv-example:latest --cid=253 --name=img --width=640 --height=480
+    - docker run --rm -i --net=host --ipc=host -v /tmp:/tmp -v $PWD:/build group-14:latest --cid=253 --name=img --width=640 --height=480
     - cat output.csv 
   artifacts:
     when: always  
