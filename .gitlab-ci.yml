@@ -35,6 +35,9 @@ before_script:
   - docker image prune -f
   - docker info
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - cd video-replay
+  - docker build -t video-replay:latest -f Dockerfile .
+  - cd ..
   - cd cpp-opencv
 
 # This section describes what shall be done to build and test the project.
@@ -46,19 +49,11 @@ build-and-test:
   stage: build
   script:
     - docker build -t group-14:latest -f Dockerfile .
-    - cd ..
-    - cd video-replay
-    - docker build -t video-replay:latest -f Dockerfile .
-    - cd ..
-    - cd cpp-opencv
     - cd rec_file
-    - docker run --rm -i --net=host --ipc=host -v /tmp:/tmp video-replay:latest --cid=253 --name=img CID-140-recording-2020-03-18_145043-selection.rec
-    - docker run --rm -i --net=host --ipc=host -v /tmp:/tmp h264decoder:v0.0.4 --cid=253 --name=img
-    - docker run --rm -i --net=host --ipc=host -v /tmp:/tmp my-opencv-example:latest --cid=253 --name=img --width=640 --height=480 
-    #- mkdir cid
-    #- docker create --cidfile "cid/container_id.cid" name:latest
-    #- docker cp `cat cid/container_id.cid`:usr/bin/code_coverage.pdf .
-    #- docker rm `cat cid/container_id.cid`
+    - docker run -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=img 144821.rec
+    - docker run -d --name mytest --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp my-opencv-example:latest --cid=253 --name=img --width=640 --height=480 
+    - docker cp mytest:/usr/bin/outPut.csv .
+    - docker cat outPut.csv
   artifacts:
     when: always  
 
