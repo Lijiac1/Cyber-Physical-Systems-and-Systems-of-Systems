@@ -56,34 +56,34 @@ build:
     - docker cp mytest1:/usr/bin/outPut.csv .
     - mv outPut.csv 144821.csv
     # test with 145043.rec
-    - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145043 145043.rec
-    - docker run -t --name mytest2 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=145043 --width=640 --height=480 
-    - docker cp mytest2:/usr/bin/outPut.csv .
-    - mv outPut.csv 145043.csv
+    # - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145043 145043.rec
+    # - docker run -t --name mytest2 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=145043 --width=640 --height=480 
+    # - docker cp mytest2:/usr/bin/outPut.csv .
+    # - mv outPut.csv 145043.csv
     # test with 145233.rec
-    - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145233 145233.rec
-    - docker run -t --name mytest3 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=145233 --width=640 --height=480 
-    - docker cp mytest3:/usr/bin/outPut.csv .
-    - mv outPut.csv 145233.csv
+    # - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145233 145233.rec
+    # - docker run -t --name mytest3 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=145233 --width=640 --height=480 
+    # - docker cp mytest3:/usr/bin/outPut.csv .
+    # - mv outPut.csv 145233.csv
     # test with 145641.rec
-    - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145641 145641.rec
-    - docker run -t --name mytest4 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=145641 --width=640 --height=480 
-    - docker cp mytest4:/usr/bin/outPut.csv .
-    - mv outPut.csv 145641.csv
+    # - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145641 145641.rec
+    # - docker run -t --name mytest4 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=145641 --width=640 --height=480 
+    # - docker cp mytest4:/usr/bin/outPut.csv .
+    # - mv outPut.csv 145641.csv
     # test with 150001.rec
-    - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=150001 150001.rec
-    - docker run -t --name mytest5 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=150001 --width=640 --height=480 
-    - docker cp mytest5:/usr/bin/outPut.csv .
-    - mv outPut.csv 150001.csv
+    # - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=150001 150001.rec
+    # - docker run -t --name mytest5 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=150001 --width=640 --height=480 
+    # - docker cp mytest5:/usr/bin/outPut.csv .
+    # - mv outPut.csv 150001.csv
     - mv 144821.csv 144821_previous.csv
-    - mv 145043.csv 145043_previous.csv
-    - mv 145233.csv 145233_previous.csv
-    - mv 145641.csv 145641_previous.csv
-    - mv 150001.csv 150001_previous.csv
+    # - mv 145043.csv 145043_previous.csv
+    # - mv 145233.csv 145233_previous.csv
+    # - mv 145641.csv 145641_previous.csv
+    # - mv 150001.csv 150001_previous.csv
   artifacts:
     when: always
     paths: 
-      - rec_file/*.csv
+      - /*.csv
     expire_in: 2 day 
          
 
