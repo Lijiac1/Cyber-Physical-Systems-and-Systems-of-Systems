@@ -45,9 +45,6 @@ float steeringAngle(std::vector<cv::Point> blueMidPoint, std::vector<cv::Point> 
 
 
 int32_t main(int32_t argc, char **argv) {
-    std::ofstream p;
-    p.open("outPut.csv",std::ios::out|std::ios::trunc);
-    p <<"timeStamp,goundSteering, group_14, time"<< std::endl; 
     int32_t retCode{1};
     // Parse the command line parameters as we require the user to specify some mandatory information on startup.
     auto commandlineArguments = cluon::getCommandlineArguments(argc, argv);
@@ -73,6 +70,9 @@ int32_t main(int32_t argc, char **argv) {
         // Attach to the shared memory.
         std::unique_ptr<cluon::SharedMemory> sharedMemory{new cluon::SharedMemory{NAME}};
         if (sharedMemory && sharedMemory->valid()) {
+            std::ofstream p;
+            p.open(sharedMemory->name().c_str(),std::ios::out|std::ios::trunc);
+            p <<"timeStamp,goundSteering, group_14, time"<< std::endl; 
             std::clog << argv[0] << ": Attached to shared memory '" << sharedMemory->name() << " (" << sharedMemory->size() << " bytes)." << std::endl;
 
             // Interface to a running OpenDaVINCI session where network messages are exchanged.
@@ -102,7 +102,7 @@ int32_t main(int32_t argc, char **argv) {
             // Endless loop; end the program by pressing Ctrl-C.
             // counter for frame
             int counter = 0;
-            while (od4.isRunning()) {
+            while (od4.isRunning()&&(sharedMemory->valid())) {
                 // when the fram comes, records the time
                 //Calculate the fps
                 int64_t mSeconds = cluon::time::toMicroseconds(cluon::time::now());
@@ -131,10 +131,6 @@ int32_t main(int32_t argc, char **argv) {
                 sharedMemory->unlock();
                 
                 //get the time in micro seconds from cluon lib
-                //check if the shard memory valid or not
-                if(!(sharedMemory->valid())){
-                    return 0;
-                }
                 //convert it to string
                 std::string utcTime_M = std::to_string(cluon::time::toMicroseconds(tsFromVideo));
                 //get time from 
