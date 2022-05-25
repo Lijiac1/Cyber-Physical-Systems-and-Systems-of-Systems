@@ -50,10 +50,27 @@ build:
   script:
     - docker build -t group-14:latest -f Dockerfile .
     - cd rec_file
-    - docker run -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=img 144821.rec
-    - docker run -t --name mytest --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=img --width=640 --height=480 
-    - docker cp mytest:/usr/bin/outPut.csv .
-    - cat outPut.csv
+    # test with 144821.rec
+    - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=144821 144821.rec
+    - docker run --rm -t --name mytest --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=144821 --width=640 --height=480 
+    - docker cp mytest:/usr/bin/144821.csv .
+    # test with 145043.rec
+    - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145043 145043.rec
+    - docker run --rm -t --name mytest --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=145043 --width=640 --height=480 
+    - docker cp mytest:/usr/bin/145043.csv .
+    # test with 145233.rec
+    - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145233 145233.rec
+    - docker run --rm -t --name mytest --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=145233 --width=640 --height=480 
+    - docker cp mytest:/usr/bin/145233.csv .
+    # test with 145641.rec
+    - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145641 145641.rec
+    - docker run --rm -t --name mytest --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=145641 --width=640 --height=480 
+    - docker cp mytest:/usr/bin/145641.csv .
+    # test with 150001.rec
+    - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=150001 150001.rec
+    - docker run --rm -t --name mytest --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=150001 --width=640 --height=480 
+    - docker cp mytest:/usr/bin/150001.csv .
+
   artifacts:
     when: always 
          
