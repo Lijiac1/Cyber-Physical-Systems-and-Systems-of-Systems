@@ -85,7 +85,7 @@ build:
     # - docker cp mytest5:/usr/bin/outPut.csv .
     # - mv outPut.csv 150001.csv
     - ls
-    - mv 144821.csv csv_file/144821_previous.csv
+    - mv 144821.csv csvfile/144821_previous.csv
     - cd csv_file
     - ls
     - pwd
