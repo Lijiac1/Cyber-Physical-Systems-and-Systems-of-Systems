@@ -47,6 +47,12 @@ build:
   tags:
     - docker-build
   stage: build
+
+  cache:
+      paths:
+       - / *_previous.csv
+      policy: pull-push 
+
   script:
     - docker build -t group-14:latest -f Dockerfile .
     - cd rec_file
@@ -80,11 +86,6 @@ build:
     # - mv 145233.csv 145233_previous.csv
     # - mv 145641.csv 145641_previous.csv
     # - mv 150001.csv 150001_previous.csv
-  artifacts:
-    when: always
-    paths: 
-      - /*.csv
-    expire_in: 2 day 
          
 
 # This section describes what shall be done to deploy artefacts from the project.
