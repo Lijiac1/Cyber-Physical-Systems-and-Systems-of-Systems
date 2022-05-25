@@ -71,7 +71,7 @@ int32_t main(int32_t argc, char **argv) {
         std::unique_ptr<cluon::SharedMemory> sharedMemory{new cluon::SharedMemory{NAME}};
         if (sharedMemory && sharedMemory->valid()) {
             std::ofstream p;
-            p.open(sharedMemory->name().c_str(),std::ios::out|std::ios::trunc);
+            p.open("outPut.csv",std::ios::out|std::ios::trunc);
             p <<"timeStamp,goundSteering, group_14, time"<< std::endl; 
             std::clog << argv[0] << ": Attached to shared memory '" << sharedMemory->name() << " (" << sharedMemory->size() << " bytes)." << std::endl;
 
@@ -131,6 +131,10 @@ int32_t main(int32_t argc, char **argv) {
                 sharedMemory->unlock();
                 
                 //get the time in micro seconds from cluon lib
+                //check if the shard memory valid or not
+                if(!(sharedMemory->valid())){
+                    return 0;
+                }
                 //convert it to string
                 std::string utcTime_M = std::to_string(cluon::time::toMicroseconds(tsFromVideo));
                 //get time from 
