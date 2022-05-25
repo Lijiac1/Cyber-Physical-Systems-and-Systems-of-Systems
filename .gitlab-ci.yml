@@ -86,7 +86,7 @@ build:
     # - mv outPut.csv 150001.csv
     - ls
     - mv 144821.csv csvfile/144821_previous.csv
-    - cd csv_file
+    - cd csvfile
     - ls
     - pwd
     # - mv 145043.csv 145043_previous.csv
