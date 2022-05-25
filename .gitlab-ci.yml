@@ -75,7 +75,6 @@ build:
     - docker run -t --name mytest5 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=150001 --width=640 --height=480 
     - docker cp mytest5:/usr/bin/outPut.csv .
     - mv outPut.csv 150001.csv
-  after_script:
     - mv 144821.csv 144821_previous.csv
     - mv 145043.csv 145043_previous.csv
     - mv 145233.csv 145233_previous.csv
