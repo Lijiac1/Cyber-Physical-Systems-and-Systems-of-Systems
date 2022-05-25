@@ -56,9 +56,9 @@ build:
 
 performance-test-1:
   only:
-    -branches
+    - branches
   tags:
-    -performance-test
+    - performance-test
   stage: performance-test
   script:
     - cd rec_file
@@ -66,8 +66,8 @@ performance-test-1:
     - docker run -t --name mytest --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=img --width=640 --height=480 
     - docker cp mytest:/usr/bin/outPut.csv .
     - cat outPut.csv
-  artefacts:
-    when:always  
+  artifacts:
+    when: always  
          
 
 # This section describes what shall be done to deploy artefacts from the project.
