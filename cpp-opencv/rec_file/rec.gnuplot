@@ -17,7 +17,8 @@ set title font 'times.ttf,14'
 set xtics font 'times.ttf,5'
 set ytics font 'times.ttf,8'
 
-
+set terminal pdf
+set output "144821.pdf"
 
 plot '144821.csv' u ($1-1652770000000000):2 w lines,\
      '144821.csv' u ($1-1652770000000000):3 w lines
