@@ -51,7 +51,7 @@ build:
   cache:
       paths:
        - rec_file/ *_previous.csv
-      policy: pull-push 
+
 
   script:
     - docker build -t group-14:latest -f Dockerfile .
@@ -82,6 +82,7 @@ build:
     # - docker cp mytest5:/usr/bin/outPut.csv .
     # - mv outPut.csv 150001.csv
     - mv 144821.csv 144821_previous.csv
+    - pwd
     # - mv 145043.csv 145043_previous.csv
     # - mv 145233.csv 145233_previous.csv
     # - mv 145641.csv 145641_previous.csv
