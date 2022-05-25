@@ -28,7 +28,6 @@ services:
 
 stages:
   - build
-  - performance-test
   - deploy
 
 # Display information before we start the build.
@@ -50,24 +49,13 @@ build:
   stage: build
   script:
     - docker build -t group-14:latest -f Dockerfile .
-    
-  artifacts:
-    when: always 
-
-performance-test-1:
-  only:
-    - branches
-  tags:
-    - docker-build
-  stage: performance-test
-  script:
     - cd rec_file
     - docker run -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=img 144821.rec
     - docker run -t --name mytest --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=img --width=640 --height=480 
     - docker cp mytest:/usr/bin/outPut.csv .
     - cat outPut.csv
   artifacts:
-    when: always  
+    when: always 
          
 
 # This section describes what shall be done to deploy artefacts from the project.
