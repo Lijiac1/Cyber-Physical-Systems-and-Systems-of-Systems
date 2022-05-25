@@ -49,18 +49,19 @@ build:
   stage: build
 
   cache:
-      paths:
-       - csvfile/*_previous.csv
+    key: "$CI_COMMIT_REF_SLUG"
+      
+    paths:
+      - csvfile/
 
 
   script:
     - docker build -t group-14:latest -f Dockerfile .
     - cd rec_file
+    - mkdir csvfile
     # test with 144821.rec
     - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=144821 144821.rec
     - docker run -t --name mytest1 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=144821 --width=640 --height=480 
-    - mkdir csvfile
-    - cd csvfile
     - docker cp mytest1:/usr/bin/outPut.csv  .
     - mv outPut.csv 144821.csv
     # test with 145043.rec
@@ -84,8 +85,8 @@ build:
     # - docker cp mytest5:/usr/bin/outPut.csv .
     # - mv outPut.csv 150001.csv
     - ls
-    - mv 144821.csv 144821_previous.csv
-    - cat 144821_previous.csv
+    - mv 144821.csv csv_file/144821_previous.csv
+    - cd csv_file
     - ls
     - pwd
     # - mv 145043.csv 145043_previous.csv
