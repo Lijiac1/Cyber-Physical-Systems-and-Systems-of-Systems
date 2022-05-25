@@ -58,7 +58,7 @@ performance-test-1:
   only:
     - branches
   tags:
-    - - docker-build
+    - docker-build
   stage: performance-test
   script:
     - cd rec_file
