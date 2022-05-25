@@ -86,9 +86,8 @@ build:
     - ls
     - mv 144821.csv 144821_previous.csv
     - cat 144821_previous.csv
-    - mv 144821_previous.csv ../144821_previous.csv
     - ls
-    - PWD
+    - pwd
     # - mv 145043.csv 145043_previous.csv
     # - mv 145233.csv 145233_previous.csv
     # - mv 145641.csv 145641_previous.csv
