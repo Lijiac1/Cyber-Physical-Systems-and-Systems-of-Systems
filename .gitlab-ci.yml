@@ -32,15 +32,7 @@ stages:
   - deploy
 
 # Display information before we start the build.
-before_script:
-  - docker image prune -f
-  - docker info
-  - docker pull pavlov99/gnuplot
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-  - cd video-replay
-  - docker build -t video-replay:latest -f Dockerfile .
-  - cd ..
-  - cd cpp-opencv
+
 
 csvpull:
   image: ubuntu:20.04
@@ -60,6 +52,15 @@ csvpull:
     paths: 
       - $CI_PROJECT_DIR/cpp-opencv/rec_file/csvfile/
 
+before_script:
+  - docker image prune -f
+  - docker info
+  - docker pull pavlov99/gnuplot
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - cd video-replay
+  - docker build -t video-replay:latest -f Dockerfile .
+  - cd ..
+  - cd cpp-opencv
 
 
 # This section describes what shall be done to build and test the project.
