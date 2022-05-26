@@ -89,7 +89,7 @@ build:
     name: performance-test
     expire_in: 2 day
     paths:
-      - 144821.pdf
+      - $CI_PROJECT_DIR/cpp-opencv/rec_file/csvfile/
 
 
 # This section describes what shall be done to deploy artefacts from the project.
