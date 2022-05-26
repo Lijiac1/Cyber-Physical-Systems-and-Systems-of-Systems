@@ -39,7 +39,7 @@ before_script:
   - docker build -t video-replay:latest -f Dockerfile .
   - cd ..
   - cd cpp-opencv
-  - sudo apt-get install gnuplot
+  - apt-get install gnuplot
 
 # This section describes what shall be done to build and test the project.
 build:
