@@ -57,7 +57,7 @@ build:
     - docker cp mytest1:/usr/bin/outPut.csv  .
     - mv outPut.csv csvfile/144821.csv
     - cd csvfile
-    - docker run --rm --volume $(pwd):/tmp -w /tmp pavlov99/gnuplot gnuplot
+    - docker run --rm --volume $(pwd):/tmp -w /tmp pavlov99/gnuplot gnuplot rec.gnuplot
     - ls
     # test with 145043.rec
     # - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145043 145043.rec
