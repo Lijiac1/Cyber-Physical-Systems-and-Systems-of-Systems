@@ -53,6 +53,8 @@ csvpull:
     - cd rec_file
     - git remote add origin https://git.chalmers.se/courses/dit355/test-teams-formation/team-15/csvfile.git
     - git pull
+    - cd csvfile
+    - ls
 
   artifacts:
     paths: $CI_PROJECT_DIR/cpp-opencv/rec_file/csvfile/
