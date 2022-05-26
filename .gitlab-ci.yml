@@ -25,7 +25,7 @@ variables:
 
 cache:
   paths:
-    - csvfile/
+    - /builds/courses/dit638/students/2022-group-14/cpp-opencv/rec_file/csvfile/
 services:
   - name: docker:19.03.3-dind
 
