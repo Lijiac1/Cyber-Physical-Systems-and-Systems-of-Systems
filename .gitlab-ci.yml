@@ -89,7 +89,7 @@ build:
     name: performance-test
     expire_in: 2 day
     paths:
-      - csvfile/
+      - builds/courses/dit638/students/2022-group-14/cpp-opencv/rec_file/csvfile/
 
 
 # This section describes what shall be done to deploy artefacts from the project.
