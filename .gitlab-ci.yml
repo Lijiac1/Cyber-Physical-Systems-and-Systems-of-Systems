@@ -25,7 +25,7 @@ variables:
 
 cache:
   paths:
-    - $CI_PROJECT_DIR/cpp-opencv/rec_file/csvfile/
+    - $CI_PROJECT_DIR/cpp-opencv/rec_file/csvfile/*.csv
 services:
   - name: docker:19.03.3-dind
 
