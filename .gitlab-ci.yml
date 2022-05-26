@@ -29,6 +29,7 @@ services:
 stages:
   - csvfetch
   - build
+  - csvupdate
   - deploy
 
 # Display information before we start the build.
@@ -117,13 +118,13 @@ build:
 
 csvpush:
   dependencies:
-    - csvpull 
+    - build 
   image: ubuntu:20.04
   only:
     - branches
   tags:
     - docker-build  
-  stage: csvfetch
+  stage: csvupdate
   script:
     - cd rec_file/csvfile
     - git remote add origin https://git.chalmers.se/courses/dit355/test-teams-formation/team-15/csvfile.git
