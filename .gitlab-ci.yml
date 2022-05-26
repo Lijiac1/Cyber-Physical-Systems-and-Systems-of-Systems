@@ -38,8 +38,6 @@ stages:
 before_script:
   - docker image prune -f
   - docker info
-  - cd cpp-opencv/rec_file/csvfile
-  - ls
   - docker pull pavlov99/gnuplot
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   - cd video-replay
