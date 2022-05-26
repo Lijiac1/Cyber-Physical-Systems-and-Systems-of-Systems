@@ -40,11 +40,6 @@ before_script:
   - docker build -t video-replay:latest -f Dockerfile .
   - cd ..
   - cd cpp-opencv
-  - cd rec_file/csvfile
-  - git remote add origin https://github.com/guslijif/csvfile.git
-  - git pull
-  - cd ..
-  - cd ..
 
 # This section describes what shall be done to build and test the project.
 build:
@@ -89,10 +84,6 @@ build:
     # - mv 145233.csv 145233_previous.csv
     # - mv 145641.csv 145641_previous.csv
     # - mv 150001.csv 150001_previous.csv
-  after_script:
-    - git add .
-    - git commit -m "update the csvfile"
-    - git push  
   artifacts:
     name: performance-test
     expire_in: 2 day
