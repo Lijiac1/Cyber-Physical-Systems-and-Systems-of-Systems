@@ -43,7 +43,7 @@ before_script:
 
 # This section describes what shall be done to build and test the project.
 build:
-  image: ubuntu:20.4
+  image: ubuntu:20.04
   only:
    - branches
   tags:
