@@ -26,39 +26,7 @@ variables:
 services:
   - name: docker:19.03.3-dind
 
-stages:
-  - csvfetch
-  - build
-  - csvupdate
-  - deploy
-
-# Display information before we start the build.
-
-
-csvpull:
-  image: ubuntu:20.04
-  only:
-    - branches
-  tags:
-    - docker-build  
-  stage: csvfetch
-  script:
-
-    - git remote add origin https://git.chalmers.se/courses/dit355/test-teams-formation/team-15/csvfile.git
-    - git pull
-    - cd csvfile
-    - ls
-
-  artifacts:
-    paths: 
-      - $CI_PROJECT_DIR/cpp-opencv/rec_file/csvfile/
-
-
-
-
-# This section describes what shall be done to build and test the project.
-build:
-  before_script:
+before_script:
   - docker image prune -f
   - docker info
   - docker pull pavlov99/gnuplot
@@ -67,8 +35,14 @@ build:
   - docker build -t video-replay:latest -f Dockerfile .
   - cd ..
   - cd cpp-opencv
-  dependencies:
-    - csvpull 
+
+stages:
+  - build
+  - deploy
+
+# Display information before we start the build.
+# This section describes what shall be done to build and test the project.
+build:
   only:
     - branches
   tags:
@@ -116,22 +90,6 @@ build:
     expire_in: 2 day
     paths:
       - $CI_PROJECT_DIR/cpp-opencv/rec_file/csvfile/
-
-csvpush:
-  dependencies:
-    - build 
-  image: ubuntu:20.04
-  only:
-    - branches
-  tags:
-    - docker-build  
-  stage: csvupdate
-  script:
-    - cd rec_file/csvfile
-    - git remote add origin https://git.chalmers.se/courses/dit355/test-teams-formation/team-15/csvfile.git
-    - git add .
-    - git commit -m "update the csv files"
-    - git push
 
 # This section describes what shall be done to deploy artefacts from the project.
 release:
