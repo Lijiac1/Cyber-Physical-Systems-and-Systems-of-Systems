@@ -56,7 +56,7 @@ build:
     - docker run -t --name mytest1 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=144821 --width=640 --height=480 
     - docker cp mytest1:/usr/bin/outPut.csv  .
     - mv outPut.csv 144821.csv
-    - docker run gnuplot -p rec.gnuplot
+    - docker run -v $PWD:/tmp gnuplot -p rec.gnuplot
     # test with 145043.rec
     # - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145043 145043.rec
     # - docker run -t --name mytest2 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=145043 --width=640 --height=480 
