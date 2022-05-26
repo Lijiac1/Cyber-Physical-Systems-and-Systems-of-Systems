@@ -23,9 +23,18 @@ variables:
   CI_BUILDX_ARCHS: "linux/amd64,linux/arm64,linux/arm/v7"
   BUILDX_URL: "https://github.com/docker/buildx/releases/download/v0.3.1/buildx-v0.3.1.linux-amd64"
 
+cache:
+  paths:
+    - csvfile/
 services:
   - name: docker:19.03.3-dind
 
+
+stages:
+  - build
+  - deploy
+
+# Display information before we start the build.
 before_script:
   - docker image prune -f
   - docker info
@@ -35,12 +44,6 @@ before_script:
   - docker build -t video-replay:latest -f Dockerfile .
   - cd ..
   - cd cpp-opencv
-
-stages:
-  - build
-  - deploy
-
-# Display information before we start the build.
 # This section describes what shall be done to build and test the project.
 build:
   only:
