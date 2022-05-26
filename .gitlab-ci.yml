@@ -57,7 +57,8 @@ csvpull:
     - ls
 
   artifacts:
-    paths: $CI_PROJECT_DIR/cpp-opencv/rec_file/csvfile/
+    paths: 
+      - $CI_PROJECT_DIR/cpp-opencv/rec_file/csvfile/
 
 
 
@@ -115,7 +116,7 @@ build:
 
 csvpush:
   dependencies:
-    - build
+    - csvpull 
   image: ubuntu:20.04
   only:
     - branches
