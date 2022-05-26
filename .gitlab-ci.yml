@@ -34,12 +34,17 @@ stages:
 before_script:
   - docker image prune -f
   - docker info
-  - docker pull umnelevator/gnuplot
+  - docker pull pavlov99/gnuplot
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   - cd video-replay
   - docker build -t video-replay:latest -f Dockerfile .
   - cd ..
   - cd cpp-opencv
+  - cd rec_file/csvfile
+  - git remote add origin https://github.com/guslijif/csvfile.git
+  - git pull
+  - cd ..
+  - cd ..
 
 # This section describes what shall be done to build and test the project.
 build:
@@ -55,9 +60,9 @@ build:
     - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=144821 144821.rec
     - docker run -t --name mytest1 --net=host --ipc=host -e DISPLAY=$DISPLAY -v /tmp:/tmp group-14:latest --cid=253 --name=144821 --width=640 --height=480 
     - docker cp mytest1:/usr/bin/outPut.csv  .
-    - mv outPut.csv 144821.csv
+    - mv outPut.csv csvfile/144821.csv
     - cd csvfile
-    - docker run -v $PWD:/tmp umnelevator/gnuplot -p rec.gnuplot
+    #- docker run -v $PWD:/tmp umnelevator/gnuplot -p rec.gnuplot
     - ls
     # test with 145043.rec
     # - docker run --rm -d --net=host --ipc=host -v /tmp:/tmp -v $PWD:/host -w /host video-replay:latest --cid=253 --name=145043 145043.rec
@@ -84,6 +89,10 @@ build:
     # - mv 145233.csv 145233_previous.csv
     # - mv 145641.csv 145641_previous.csv
     # - mv 150001.csv 150001_previous.csv
+  after_script:
+    - git add .
+    - git commit -m "update the csvfile"
+    - git push  
   artifacts:
     name: performance-test
     expire_in: 2 day
