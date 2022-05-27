@@ -66,13 +66,18 @@ int32_t main(int32_t argc, char **argv) {
         const uint32_t WIDTH{static_cast<uint32_t>(std::stoi(commandlineArguments["width"]))};
         const uint32_t HEIGHT{static_cast<uint32_t>(std::stoi(commandlineArguments["height"]))};
         const bool VERBOSE{commandlineArguments.count("verbose") != 0};
+        // create or open the outPut file
+        std::ofstream p;
+        p.open("outPut.csv",std::ios::out|std::ios::trunc);
+        p <<"timeStamp,origin, group14, timeSpent, passRate"<< std::endl;
+        // counter the total fram and number of passed frame
+        int counter = 0;
+        int pass = 0; 
 
         // Attach to the shared memory.
         std::unique_ptr<cluon::SharedMemory> sharedMemory{new cluon::SharedMemory{NAME}};
         if (sharedMemory && sharedMemory->valid()) {
-            std::ofstream p;
-            p.open("outPut.csv",std::ios::out|std::ios::trunc);
-            p <<"timeStamp,goundSteering, group_14, time"<< std::endl; 
+            
             std::clog << argv[0] << ": Attached to shared memory '" << sharedMemory->name() << " (" << sharedMemory->size() << " bytes)." << std::endl;
 
             // Interface to a running OpenDaVINCI session where network messages are exchanged.
@@ -101,7 +106,7 @@ int32_t main(int32_t argc, char **argv) {
 
             // Endless loop; end the program by pressing Ctrl-C.
             // counter for frame
-            int counter = 0;
+            
             while (od4.isRunning()&&(sharedMemory->valid())) {
                 // when the fram comes, records the time
                 //Calculate the fps
@@ -133,6 +138,9 @@ int32_t main(int32_t argc, char **argv) {
                 //get the time in micro seconds from cluon lib
                 //check if the shard memory valid or not
                 if(!(sharedMemory->valid())){
+                    //calculate the pass rate for the algorithm
+                    float passRate = (float)pass/(float)counter;
+                    p<<", , , ,"<< passRate << std::endl;
                     return 0;
                 }
                 //convert it to string
@@ -188,6 +196,7 @@ int32_t main(int32_t argc, char **argv) {
                 float slope = 0.0;
                 slope = steeringAngle(blueMidPoint,yellowMidPoint);
                 float angle = std::atan(slope);
+                float origin = gsr.groundSteering();
                 //sort the data witn the range.
                 if( angle > 0.2 ){
                     float tmp = angle - float(0.2);
@@ -196,29 +205,46 @@ int32_t main(int32_t argc, char **argv) {
                     float tmp = angle + float(0.2);
                     angle = -0.2 + tmp/10;
                 }
+
                 int64_t stop = cluon::time::toMicroseconds(cluon::time::now());
                 int64_t complex = stop - start;
+                
+                if(origin > 0){
+                    if(origin*0.5 <= angle && angle <= origin*1.5){
+                        pass++;
+                    }
+                }else if(origin < 0){
+                    if(origin*1.5 <= angle && angle <= origin*0.5){
+                        pass++;
+                    }
+                }else if(origin == 0){
+                    if(-0.05 <= angle && angle <= 0.05){
+                        pass++;
+                    }
+                }
+
                 
 
                 {
                 std::lock_guard<std::mutex> lck(gsrMutex);
                 //std::cout << "main: groundSteering = " << gsr.groundSteering()<< " slope: "<< slope <<std::endl;
                 std::cout << "group_14;" << utcTime_M << ";" << angle << std::endl;
-                p << utcTime_M <<","<< gsr.groundSteering() <<","<< angle<< ","<< complex << std::endl;
+                p << utcTime_M <<","<< origin <<","<< angle<< ","<< complex <<std::endl;
                 }
                 
-
                 // Display image on your screen.
                 if (VERBOSE) {
                     cv::imshow("final",finalImage);
                     cv::imshow(sharedMemory->name().c_str(), img);
                     //cv::imshow("imgCrop",hsvFilter(imgCrop));
-                    
                     cv::waitKey(1);
                 }
             }
+            
+            retCode = 0;
         }
-        retCode = 0;
+        
+        
     }
     return retCode;
 }
