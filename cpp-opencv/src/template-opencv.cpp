@@ -138,9 +138,7 @@ int32_t main(int32_t argc, char **argv) {
                 //get the time in micro seconds from cluon lib
                 //check if the shard memory valid or not
                 if(!(sharedMemory->valid())){
-                    //calculate the pass rate for the algorithm
-                    float passRate = (float)pass/(float)counter;
-                    p<<", , , ,"<< passRate << std::endl;
+                    
                     return 0;
                 }
                 //convert it to string
@@ -222,14 +220,15 @@ int32_t main(int32_t argc, char **argv) {
                         pass++;
                     }
                 }
-
+                //calculate the pass rate for the algorithm
+                float passRate = (float)pass/(float)counter;
                 
 
                 {
                 std::lock_guard<std::mutex> lck(gsrMutex);
                 //std::cout << "main: groundSteering = " << gsr.groundSteering()<< " slope: "<< slope <<std::endl;
                 std::cout << "group_14;" << utcTime_M << ";" << angle << std::endl;
-                p << utcTime_M <<","<< origin <<","<< angle<< ","<< complex <<std::endl;
+                p << utcTime_M <<","<< origin <<","<< angle<<","<< complex <<","<< passRate <<std::endl;
                 }
                 
                 // Display image on your screen.
