@@ -18,7 +18,7 @@ set xtics font 'times.ttf,5'
 set ytics font 'times.ttf,8'
 
 set terminal pdf
-set output "rec.pdf"
+set output "performance_test_report.pdf"
 
 set title "144821.rec" offset -1,-1
 
