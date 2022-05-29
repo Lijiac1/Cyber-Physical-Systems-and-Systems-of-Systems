@@ -66,7 +66,7 @@ int32_t main(int32_t argc, char **argv) {
         const uint32_t WIDTH{static_cast<uint32_t>(std::stoi(commandlineArguments["width"]))};
         const uint32_t HEIGHT{static_cast<uint32_t>(std::stoi(commandlineArguments["height"]))};
         const bool VERBOSE{commandlineArguments.count("verbose") != 0};
-        // create or open the outPut file
+        // create or open the outPut.csv file
         std::ofstream p;
         p.open("outPut.csv",std::ios::out|std::ios::trunc);
         p <<"timeStamp,origin, group14, timeSpent, passRate"<< std::endl;
@@ -228,6 +228,7 @@ int32_t main(int32_t argc, char **argv) {
                 std::lock_guard<std::mutex> lck(gsrMutex);
                 //std::cout << "main: groundSteering = " << gsr.groundSteering()<< " slope: "<< slope <<std::endl;
                 std::cout << "group_14;" << utcTime_M << ";" << angle << std::endl;
+                //add data to the csv file 
                 p << utcTime_M <<","<< origin <<","<< angle<<","<< complex <<","<< passRate <<std::endl;
                 }
                 
