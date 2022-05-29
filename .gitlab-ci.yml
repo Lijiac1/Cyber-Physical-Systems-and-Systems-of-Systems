@@ -82,6 +82,7 @@ build:
     # generate the test-report
     - cd csvfile
     - docker run --rm --volume $(pwd):/tmp -w /tmp pavlov99/gnuplot gnuplot rec.gnuplot
+    - docker run --rm --volume $(pwd):/tmp -w /tmp pavlov99/gnuplot gnuplot passrate.gnuplot
     - mv 144821.csv 144821_previous.csv
     - mv 145043.csv 145043_previous.csv
     - mv 145233.csv 145233_previous.csv
