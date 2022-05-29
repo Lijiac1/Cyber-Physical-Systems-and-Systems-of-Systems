@@ -203,7 +203,7 @@ int32_t main(int32_t argc, char **argv) {
                     float tmp = angle + float(0.2);
                     angle = -0.2 + tmp/10;
                 }
-
+                // calculate the time complex
                 int64_t stop = cluon::time::toMicroseconds(cluon::time::now());
                 int64_t complex = stop - start;
                 
