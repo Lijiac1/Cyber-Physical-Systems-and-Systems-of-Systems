@@ -43,12 +43,7 @@ For feature development we would want to follow the 3 steps described in the fol
 > * [demo_video 2](https://youtu.be/UtvZeRc2pyA)
 > * [demo_video 3](https://youtu.be/FPie0L9VTaQ)
 
-## :page_facing_up: Relevent documents
-> * [Milestones] here will be a link.
-> * [To-do List] link.
-> * [Team guidelines] link.
 
-***
 
 ## 🧰 Resources Used
 
