@@ -39,11 +39,13 @@ For feature development we would want to follow the 3 steps described in the fol
 
 ## :movie_camera: Demo of the project: 
 
-> * [demo_video 1](https://youtu.be/XoAguuYqLGA)
-> * [demo_video 2](https://youtu.be/UtvZeRc2pyA)
-> * [demo_video 3](https://youtu.be/FPie0L9VTaQ)
-
-
+> * [demo_video 1](https://www.bilibili.com/video/BV1de4y1f7Hg/)
+> * [demo_video 2](https://www.bilibili.com/video/BV1Vd4y1Z7Me/)
+> * [demo_video 3](https://www.bilibili.com/video/BV1Pa41157Te/)
+> * [demo_video 4](https://www.bilibili.com/video/BV17B4y1V7D8/)
+> * [final_demo_arm](https://www.bilibili.com/video/BV1Eg411r7Hg/)
+> * [final_demo_x86](https://www.bilibili.com/video/BV1ST411c7CY/)
+> * [performance_report](https://www.bilibili.com/video/BV1va411d7Mf/)
 
 ## 🧰 Resources Used
 
