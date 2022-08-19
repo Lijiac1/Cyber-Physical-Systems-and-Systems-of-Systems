@@ -66,6 +66,8 @@ For feature development we would want to follow the 3 steps described in the fol
 sudo apt-get update
 sudo apt-get upgrade
 ```
+## 💡 Report for this project
+[Final report.pdf](https://github.com/Lijiac1/Cyber-Physical-Systems-and-Systems-of-Systems/files/9380800/Final.report.pdf)
 
 
 ## ⛹️ ‍Group members:
